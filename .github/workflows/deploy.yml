@@ -36,7 +36,7 @@ jobs:
       - name: Copy files to VPS
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.VPN_HOST }}
+          host: ${{ secrets.VPN_USER }}
           username: ${{ secrets.VPN_USER }}
           password: ${{ secrets.VPN_PASSWORD }}
           source: "."
@@ -49,7 +49,7 @@ jobs:
           APP_PORT: ${{ secrets.APP_PORT }}
           STUDENT_NAME: ${{ secrets.STUDENT_NAME }}
         with:
-          host: ${{ secrets.VPN_HOST }}
+          host: ${{ secrets.VPN_USER }}
           username: ${{ secrets.VPN_USER }}
           password: ${{ secrets.VPN_PASSWORD }}
           envs: DEPLOY_PATH,APP_PORT,STUDENT_NAME

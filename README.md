@@ -49,8 +49,7 @@ docker compose up --build -d
 ## Gerekli Github Secrets Listesi
 Uygulamanın GitHub Actions ile otomatik deploy edilebilmesi için GitHub repository ayarlarında şu secrets'ların tanımlanmış olması gerekir:
 
-- `VPN_HOST`: Hedef sunucunun IP veya Host adresi
-- `VPN_USER`: Sunucu SSH kullanıcı adı
+- `VPN_USER`: Sunucu SSH bağlantı bilgisi (IP veya Host Alias)
 - `VPN_PASSWORD`: Sunucu SSH şifresi
 - `DEPLOY_PATH`: Sunucuda projenin kopyalanacağı ve çalıştırılacağı dizin
 - `APP_PORT`: Sunucuda uygulamanın dışarı açılacağı host portu
