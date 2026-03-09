@@ -58,5 +58,5 @@ jobs:
             echo "APP_PORT=$APP_PORT" > .env
             echo "ASPNETCORE_ENVIRONMENT=Production" >> .env
             echo "STUDENT_NAME=$STUDENT_NAME" >> .env
-            docker compose down
-            docker compose up --build -d
+            docker-compose down
+            docker-compose up --build -d
