@@ -1,62 +1,83 @@
-# DEVOPS 101 - Bitirme Projesi
+# DevOps 101 - Bitirme Projesi
 
-## Proje Açıklaması
-Bu proje, GitHub Actions ile Docker Compose kullanan .NET 10 tabanlı bir Web API uygulamasının otomatik deploy edilmesi amacıyla hazırlanmıştır. Uygulama bir VPS üzerinde Ubuntu ortamında yayınlanmaktadır.
+Bu repo, DevOps 101 eğitimi için bitirme projesi olarak hazırlanmıştır. Proje, Docker Compose ve GitHub Actions kullanılarak VPS üzerine otomatik olarak dağıtılan (deploy edilen) **.NET 10** tabanlı bir Web API uygulamasını içerir.
 
-Projede iki temel endpoint bulunmaktadır:
-- `GET /health` : Uygulamanın ayakta olup olmadığını kontrol eder (200 OK döner).
-- `GET /api/info` : Öğrenci adı, ortam bilgisi ve sunucunun UTC zamanını JSON formatında döner.
+---
 
-## Kullanılan Teknolojiler
-- .NET 10 (Web API, Minimal API)
-- xUnit (Birim testleri)
-- Docker & Docker Compose
-- NGINX (Reverse proxy)
-- GitHub Actions (CI/CD)
+## 🚀 Proje İçeriği ve Özellikler
 
-## Local Çalıştırma Adımları
-Projeyi bilgisayarınızda (Docker kullanmadan) çalıştırmak için aşağıdaki komutları kullanabilirsiniz:
+Uygulama, temel sağlık durumunu ve ortam bilgilerini sunan iki basit endpoint barındırır:
+
+- **`GET /health`**
+  - Uygulama ayaktaysa `200 OK` döner.
+- **`GET /api/info`**
+  - Eğitimde istenen özel formatta; öğrenci adını, uygulamanın çalıştığı ortamı ve sunucu zamanını JSON olarak döndürür.
+
+### 🛠 Kullanılan Teknolojiler
+
+- **Backend:** .NET 10 (Minimal API) & C#
+- **Test:** xUnit
+- **Containerization:** Docker & Docker Compose
+- **Web Sunucusu:** NGINX (Reverse Proxy)
+- **CI/CD:** GitHub Actions
+
+---
+
+## 💻 Geliştirme Ortamında Çalıştırma
+
+Projeyi kendi bilgisayarınızda farklı yöntemlerle çalıştırabilirsiniz.
+
+### 1. Docker Compose ile (Önerilen)
+Web API ve Nginx servislerini tam entegre çalıştırır.
 
 ```bash
-cd src/SimpleApi
-dotnet run
-```
-API varsayılan olarak `http://localhost:5000` (veya `http://localhost:8080`) portunda yayın yapacaktır.
+# Değişken şablonunu asıl dosyaya kopyalayın
+cp .env.example .env
 
-## Docker ile Çalıştırma Adımları
-Sadece uygulamayı Docker üzerinde derleyip çalıştırmak için:
+# Uygulamayı ayağa kaldırın
+docker-compose up --build -d
+```
+Test için:
+- `http://localhost:<APP_PORT>/health`
+- `http://localhost:<APP_PORT>/api/info`
+
+### 2. Sadece Docker ile
+Nginx olmadan yalın API uygulamasını konteynerde çalıştırır.
 
 ```bash
 docker build -t simpleapi .
 docker run -p 8080:8080 simpleapi
 ```
 
-## Docker Compose ile Çalıştırma Adımları
-NGINX reverse proxy ve Web API'yi birlikte yapılandırarak ayağa kaldırmak için:
+### 3. Native .NET ile (Geliştirici Modu)
+Docker kullanmadan, projeyi doğrudan makinenizde çalıştırır.
 
-1. `.env.example` dosyasını baz alarak bir `.env` dosyası oluşturun:
 ```bash
-cp .env.example .env
+cd src/SimpleApi
+dotnet run
 ```
-2. Docker Compose ile başlatın:
-```bash
-docker compose up --build -d
-```
-3. Tarayıcınızdan test edin:
-- `http://localhost:${APP_PORT}/health`
-- `http://localhost:${APP_PORT}/api/info`
 
-## Gerekli Github Secrets Listesi
-Uygulamanın GitHub Actions ile otomatik deploy edilebilmesi için GitHub repository ayarlarında şu secrets'ların tanımlanmış olması gerekir:
+---
 
-- `VPS_HOST`: Hedef sunucunun IP adresi
-- `VPS_USER`: Sunucu SSH kullanıcı adı
-- `VPS_PASSWORD`: Sunucu SSH şifresi
-- `DEPLOY_PATH`: Sunucuda projenin kopyalanacağı ve çalıştırılacağı dizin
-- `APP_PORT`: Sunucuda uygulamanın dışarı açılacağı host portu
-- `STUDENT_NAME`: Öğrenci adı ve soyadı
+## ⚙️ CI/CD ve Otomatik Dağıtım (Deployment)
 
-## Deployment Sürecinin Nasıl Tetiklendiği
-Deployment süreci `main` branch'ine yapılan her **push** işleminde tetiklenmektedir. İşleyiş sırası şöyledir:
-1. `build-and-test` job'ı çalışır (.NET projelerini derler ve `dotnet test` ile testleri koşturur).
-2. `deploy` job'ı çalışır (Sunucuya SCP ile dosyaları kopyalar, SSH üzerinden `docker compose up --build -d` ile uygulamayı ayağa kaldırır).
+Projede sürekli entegrasyon ve dağıtım (**CI/CD**) süreçleri için GitHub Actions kullanılmaktadır. 
+
+`main` dalına (branch) yapılan her yeni **push** işleminde:
+1. Kaynak kod çekilir ve .NET 10 SDK kurulur.
+2. Tüm projenin derlenmesi ve **xUnit** testleri çalıştırılır. (`build-and-test`)
+3. Testler başarısız olursa süreç durdurulur ve hatalı kodun sunucuya gitmesi engellenir.
+4. Testler başarılıysa, **Appleboy SSH/SCP Action** kullanılarak tüm proje klasörleri ve değişkenler güvenli bir şekilde hedef VPS sunucusuna aktarılır.
+5. Sunucuda bulunan eski Docker imajları silinir ve yeni kodlarla birlikte proje tekrar ayağa kaldırılır.
+
+### 🔐 Gerekli GitHub Secrets
+Bu otomatik kurulumun çalışması için, projenizi klonladıktan sonra kendi GitHub Repository ayarlarınızda (`Settings > Secrets and variables > Actions`) aşağıdaki gizli değişkenlerin (secrets) tanımlı olması gerekmektedir:
+
+| Değişken Adı | Açıklama |
+|---|---|
+| `VPS_HOST` | Hedef sunucunun IP adresi |
+| `VPS_USER` | Sunucu SSH kullanıcı adı (Örn: ubuntu, root) |
+| `VPS_PASSWORD` | Sunucu SSH şifresi |
+| `DEPLOY_PATH` | Sunucuda projenin kurulacağı tam dizin yolu (Örn: `/home/ubuntu/proje`) |
+| `APP_PORT` | Uygulamanın sunucu dışına açılacağı yayın portu (Örn: `8080`) |
+| `STUDENT_NAME` | Kendi adınız ve soyadınız |
