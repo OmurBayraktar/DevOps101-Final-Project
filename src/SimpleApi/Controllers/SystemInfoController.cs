@@ -16,7 +16,7 @@ public class SystemInfoController : ControllerBase
     [HttpGet("health")]
     public IActionResult Health()
     {
-        return Ok("OK");
+        return Ok("200 OK");
     }
 
     [HttpGet("api/info")]
