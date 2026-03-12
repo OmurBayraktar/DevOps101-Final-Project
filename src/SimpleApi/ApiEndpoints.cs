@@ -4,7 +4,7 @@ public static class ApiEndpoints
 {
     public static void MapApiEndpoints(this WebApplication app)
     {
-        app.MapGet("/health", () => Results.Ok("OK"));
+        app.MapGet("/health", () => Results.Ok("200 OK"));
 
         app.MapGet("/api/info", () =>
         {
