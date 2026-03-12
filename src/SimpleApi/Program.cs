@@ -1,3 +1,5 @@
+using SimpleApi;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
@@ -17,21 +19,6 @@ app.MapGet("/", () =>
     return Results.Content(htmlContent, "text/html");
 });
 
-app.MapGet("/health", () => Results.Ok("OK"));
-
-app.MapGet("/api/info", () =>
-{
-    var environment = app.Environment.EnvironmentName;
-    var studentName = Environment.GetEnvironmentVariable("STUDENT_NAME") ?? "Unknown Student";
-    
-    var response = new
-    {
-        student = studentName,
-        environment = environment,
-        serverTimeUtc = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
-    };
-    
-    return Results.Ok(response);
-});
+app.MapApiEndpoints();
 
 app.Run();
