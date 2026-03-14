@@ -1,8 +1,11 @@
 services:
   api:
-    image: ${IMAGE_URL}
+    image: ${IMAGE_URL:-yerel-api-imaji}
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT_OVERRIDE=${ASPNETCORE_ENVIRONMENT:-}
+      - ASPNETCORE_ENVIRONMENT_OVERRIDE=${ASPNETCORE_ENVIRONMENT:-Development}
       - STUDENT_NAME=${STUDENT_NAME}
     expose:
       - "8080"

@@ -13,17 +13,15 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 RUN echo '#!/bin/bash\n\
-    if grep -q -i "ubuntu\|microsoft" /proc/version; then\n\
-    export ASPNETCORE_ENVIRONMENT="Production"\n\
-    else\n\
-    export ASPNETCORE_ENVIRONMENT="Development"\n\
-    fi\n\
+    # Varsayılan olarak Development çalıştır\n\
+    export ASPNETCORE_ENVIRONMENT="${ASPNETCORE_ENVIRONMENT:-Development}"\n\
     \n\
-    if [ -z "$ASPNETCORE_ENVIRONMENT_OVERRIDE" ]; then\n\
-    echo "Auto-detected environment: $ASPNETCORE_ENVIRONMENT"\n\
+    # Override değişkeni verilmişse onu kullan\n\
+    if [ -n "$ASPNETCORE_ENVIRONMENT_OVERRIDE" ]; then\n\
+      export ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT_OVERRIDE"\n\
+      echo "Using override environment: $ASPNETCORE_ENVIRONMENT"\n\
     else\n\
-    export ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT_OVERRIDE\n\
-    echo "Using provided environment: $ASPNETCORE_ENVIRONMENT"\n\
+      echo "Using default environment: $ASPNETCORE_ENVIRONMENT"\n\
     fi\n\
     \n\
     exec dotnet SimpleApi.dll' > /app/entrypoint.sh \
