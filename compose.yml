@@ -1,8 +1,6 @@
 services:
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${IMAGE_URL}
     environment:
       - ASPNETCORE_ENVIRONMENT_OVERRIDE=${ASPNETCORE_ENVIRONMENT:-}
       - STUDENT_NAME=${STUDENT_NAME}

@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -26,37 +30,72 @@ jobs:
       - name: Test
         run: dotnet test src/SimpleApi.Tests/SimpleApi.Tests.csproj --no-build --verbosity normal
 
-  deploy:
+  publish-image:
     needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Convert repository name to lowercase
+        id: string-format
+        run: echo "IMAGE_NAME_LOWER=$(echo ${{ env.IMAGE_NAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:latest
+
+  deploy:
+    needs: publish-image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy files to VPS
+      - name: Copy docker-compose and nginx config to VPS
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          source: "."
+          source: "docker-compose.yml,nginx"
           target: ${{ secrets.DEPLOY_PATH }}
 
-      - name: Start Docker Compose on VPS
+      - name: Deploy and Start Docker Compose on VPS
         uses: appleboy/ssh-action@master
         env:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           APP_PORT: ${{ secrets.APP_PORT }}
           STUDENT_NAME: ${{ secrets.STUDENT_NAME }}
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          envs: DEPLOY_PATH,APP_PORT,STUDENT_NAME
+          envs: DEPLOY_PATH,APP_PORT,STUDENT_NAME,REGISTRY,IMAGE_NAME
           script: |
             cd $DEPLOY_PATH
+            LOWERCASE_IMAGE_NAME=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
+            
             echo "APP_PORT=$APP_PORT" > .env
             echo "ASPNETCORE_ENVIRONMENT=Production" >> .env
             echo "STUDENT_NAME=$STUDENT_NAME" >> .env
-            docker-compose down
-            docker-compose up --build -d
+            echo "IMAGE_URL=$REGISTRY/$LOWERCASE_IMAGE_NAME:latest" >> .env
+            
+            docker-compose pull
+            docker-compose up -d
+            docker image prune -f
