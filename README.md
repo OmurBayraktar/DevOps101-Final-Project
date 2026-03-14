@@ -15,7 +15,7 @@ Uygulama, temel sağlık durumunu ve ortam bilgilerini sunan iki basit endpoint 
 
 ### 🛠 Kullanılan Teknolojiler
 
-- **Backend:** .NET 10 (Minimal API) & C#
+- **Backend:** .NET 10 (ASP.NET Core Web API, Controller tabanlı) & C#
 - **Test:** xUnit
 - **Containerization:** Docker & Docker Compose
 - **Web Sunucusu:** NGINX (Reverse Proxy)
@@ -44,9 +44,17 @@ Test için:
 ### 2. Sadece Docker ile
 Nginx olmadan yalın API uygulamasını konteynerde çalıştırır.
 
+- Varsayılan olarak **Development** ortamında çalışır.
+- İsterseniz `ASPNETCORE_ENVIRONMENT_OVERRIDE` ile ortamı ezebilirsiniz (örn. `Production`).
+
 ```bash
 docker build -t simpleapi .
+
+# Geliştirme (varsayılan) için
 docker run -p 8080:8080 simpleapi
+
+# Production ortamı simüle etmek için
+docker run -p 8080:8080 -e ASPNETCORE_ENVIRONMENT_OVERRIDE=Production simpleapi
 ```
 
 ### 3. Native .NET ile (Geliştirici Modu)
