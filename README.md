@@ -117,10 +117,11 @@
 API ve NGINX birlikte çalışır. Port, `.env` içindeki `APP_PORT` ile belirlenir (varsayılan `8080`).
 
 ```bash
-cp .env.example .env
-# İsteğe bağlı: .env içinde APP_PORT, ASPNETCORE_ENVIRONMENT, STUDENT_NAME düzenleyin.
+# Docker Compose başlatmak için:
+docker compose --env-file .env up --build -d
 
-docker compose up --build -d
+# Docker Compose durdurmak için:
+docker compose down
 ```
 
 Erişim:
@@ -133,9 +134,11 @@ Erişim:
 ### 2. Sadece Docker (NGINX olmadan)
 
 ```bash
-docker build -t simpleapi .
+# Api`yi docker da başlatmak için:
+docker build -t simpleapi . && docker run -d --name api --rm -p 8080:8080 --env-file .env simpleapi
 
-docker run -p 8080:8080 --env-file .env simpleapi
+# Api`yi durdurmak için:
+docker stop api
 ```
 
 Erişim: `http://localhost:8080/health`, `http://localhost:8080/api/info`.
