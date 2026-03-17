@@ -18,7 +18,7 @@
 
 ---
 
-## Özellikler
+## 🚀 Özellikler
 
 - Sağlık kontrolü ve ortam bilgisi sunan REST endpoint’leri
 - xUnit ile birim testleri
@@ -28,7 +28,7 @@
 
 ---
 
-## Teknolojiler
+## 🛠️ Teknolojiler
 
 | Katman        | Teknoloji |
 |---------------|-----------|
@@ -40,7 +40,7 @@
 
 ---
 
-## Ön Gereksinimler
+## 📋 Ön Gereksinimler
 
 - **Yerel geliştirme:** [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - **Docker ile çalıştırma:** [Docker](https://docs.docker.com/get-docker/) ve (isteğe bağlı) [Docker Compose](https://docs.docker.com/compose/install/)
@@ -48,7 +48,7 @@
 
 ---
 
-## API Referansı
+## 🔗 API Referansı
 
 | Method | Endpoint     | Açıklama |
 |--------|--------------|----------|
@@ -70,7 +70,7 @@
 
 ---
 
-## Ortam Değişkenleri
+## 🔑 Ortam Değişkenleri
 
 | Değişken                  | Açıklama | Varsayılan / Kullanım |
 |---------------------------|----------|------------------------|
@@ -83,7 +83,7 @@
 
 ---
 
-## Proje Yapısı
+## 📁 Proje Yapısı
 
 ```
 ├── .github/workflows/
@@ -110,7 +110,7 @@
 
 ---
 
-## Yerel Çalıştırma
+## 💻 Yerel Çalıştırma
 
 ### 1. Docker Compose (önerilen)
 
@@ -156,7 +156,7 @@ Uygulama `http://localhost:5024` (veya launchSettings’te tanımlı URL) üzeri
 
 ---
 
-## CI/CD Pipeline
+## 🔄 CI/CD Pipeline
 
 `main` dalına her **push** tetiklenir.
 
@@ -168,7 +168,7 @@ Uygulama `http://localhost:5024` (veya launchSettings’te tanımlı URL) üzeri
 
 ---
 
-## GitHub Secrets
+## 🛡️ GitHub Secrets
 
 Otomatik dağıtım için repository’de **Settings → Secrets and variables → Actions** altında aşağıdaki secret’lar tanımlanmalıdır:
 
