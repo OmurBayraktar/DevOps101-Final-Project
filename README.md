@@ -54,15 +54,15 @@
 |--------|--------------|----------|
 | `GET`  | `/`          | Ana sayfa (HTML). |
 | `GET`  | `/health`    | Sağlık kontrolü. Başarılı yanıt: `200 OK` (metin). |
-| `GET`  | `/api/info`  | Ortam bilgisi (JSON). Öğrenci adı `STUDENT_NAME` ortam değişkeninden okunur. |
+| `GET`  | `/api/info`  | Ortam bilgisi (JSON). Öğrenci adı `STUDENT_NAME`, çalışma ortamı `ASPNETCORE_ENVIRONMENT`, zamanı `ServerTimeUtc` değişkeninden okunur.  |
 
 **`GET /api/info` örnek yanıt:**
 
 ```json
 {
-  "student": "Ömür Bayraktar",
-  "environment": "Development",
-  "serverTimeUtc": "2025-03-14T12:00:00Z"
+  "student": "Student Name",
+  "environment": "Environment",
+  "serverTimeUtc": "Server Time"
 }
 ```
 
@@ -77,7 +77,6 @@
 | `APP_PORT`                | NGINX’in dinlediği host portu (Docker Compose). | `.env.example`: `8080` |
 | `ASPNETCORE_ENVIRONMENT`  | Çalışma ortamı (`Development`, `Production` vb.). | Yerel compose: `Development`; VPS deploy: `Production` |
 | `STUDENT_NAME`            | `/api/info` yanıtında görünen öğrenci adı. | Örnek: `Ömür Bayraktar` |
-| `IMAGE_URL`               | Kullanılacak API imajı (Docker Compose). | Yerel: build kullanılır; deploy: `ghcr.io/<repo>:latest` |
 
 `.env` oluşturmak için: `cp .env.example .env` ve değerleri düzenleyin.
 
